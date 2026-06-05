@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,22 +15,19 @@
 
 <!-- ====== INTRO ====== -->
 <div class="intro" id="intro">
-  <div class="intro-bg"></div>
-  <div class="intro-stage stage-1" id="stage1">
-    <div class="glitch-wrap">
-      <div class="glitch glitch-a">HELLO</div>
-      <div class="glitch glitch-b">HELLO</div>
+  <canvas id="inkCanvas"></canvas>
+  <div class="intro-content">
+    <h1 class="intro-title">欢 迎</h1>
+    <p class="intro-subtitle" id="introSubtitle"></p>
+    <div class="intro-arrows">
+      <span></span><span></span><span></span>
     </div>
-    <div class="intro-sub">WELCOME TO MY WORLD</div>
   </div>
-  <div class="intro-stage stage-2" id="stage2">
-    <div class="intro-name-wrap">
-      <span class="intro-name-cn">关 福 博</span>
-    </div>
-    <div class="intro-divider"><span></span></div>
-    <div class="intro-tagline" data-i18n="intro.desc">AI 驱动开发 · 从想象到现实</div>
+  <div class="intro-wave">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,100 C240,160 480,20 720,80 C960,140 1200,30 1440,90 L1440,200 L0,200 Z"/>
+    </svg>
   </div>
-  <div class="intro-bar-wrap"><div class="intro-bar"></div></div>
 </div>
 
 <!-- ====== SETTINGS ====== -->
@@ -261,7 +258,8 @@
 </main>
 
 <script src="i18n.js"></script>
-<script src="fluid-bg.js"></script>
+<script src="ink-intro.js"></script>
+<script src="seasons.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

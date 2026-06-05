@@ -1,6 +1,6 @@
 // ============================================================
 // 关福博 — Portfolio · Full Engine
-// Cinematic intro · Fluid canvas · Scroll reveal · i18n · Theme
+// Cinematic intro · Seasonal canvas bg · Scroll reveal · i18n · Theme
 // ============================================================
 
 (function(){
@@ -9,30 +9,18 @@
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
 
-// ——— INTRO SEQUENCE ———
+// ——— INTRO bridge: Ink → Main ———
+window.startMainContent=function(){
+  restartTyping();
+  window.dispatchEvent(new Event('scroll'));
+  if(window.Seasons&&window.Seasons.start)window.Seasons.start();
+};
+
 function runIntro(){
-  const intro=$('#intro'),main=$('#main'),
-        s1=$('#stage1'),s2=$('#stage2');
-  if(!intro||!main)return;
-
+  const intro=$('#intro');
+  if(!intro)return;
   document.body.style.overflow='hidden';
-
-  // Phase 1: glitch HELLO (0–1.2s)
-  // Phase 2: swap to name stage (1.2s)
-  setTimeout(()=>{
-    s1.style.opacity='0';s1.style.transform='translateY(-30px)';
-    s2.style.opacity='1';s2.style.transform='translateY(0)';
-  },1050);
-
-  // Phase 3: hide intro, show main (2.2s)
-  setTimeout(()=>{
-    intro.classList.add('hide');
-    main.classList.add('on');
-    document.body.style.overflow='';
-    restartTyping();
-    // Trigger counter + skill bar via scroll check
-    window.dispatchEvent(new Event('scroll'));
-  },2200);
+  // Ink intro starts automatically via ink-intro.js
 }
 
 // ——— SETTINGS PANEL ———
@@ -46,7 +34,7 @@ function initSettings(){
 
 // ——— THEME ———
 function initTheme(){
-  const saved=localStorage.getItem('pf-theme')||'dark';
+  const saved=localStorage.getItem('pf-theme')||'light';
   applyTheme(saved);
   const btn=$('#thToggle');
   if(btn)btn.addEventListener('click',()=>{
@@ -69,9 +57,15 @@ function initLang(){
 // ——— NAVBAR ———
 function initNav(){
   const nav=$('#nav'),lks=$$('.nav-lk'),secs=$$('section[id]');
+  const hero=$('#home'),scInd=$('.hero-sc');
   window.addEventListener('scroll',()=>{
     const y=pageYOffset;
     nav.classList.toggle('on',y>80);
+    // Hide scroll indicator when past hero
+    if(scInd&&hero){
+      const heroH=hero.offsetHeight;
+      scInd.classList.toggle('hide-sc',y>heroH*0.6);
+    }
     let cur='';
     secs.forEach(s=>{if(y>=s.offsetTop-140)cur=s.getAttribute('id')});
     lks.forEach(l=>{
@@ -127,18 +121,6 @@ function initMenu(){
   document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!tg.contains(e.target))menu.classList.remove('open')});
 }
 
-// ——— CARD FOLLOW SPOTLIGHT ———
-function initCardFollow(){
-  document.addEventListener('mousemove',e=>{
-    $$('.card-b').forEach(card=>{
-      const r=card.getBoundingClientRect();
-      const x=e.clientX-r.left,y=e.clientY-r.top;
-      card.style.setProperty('--mx',x+'px');
-      card.style.setProperty('--my',y+'px');
-    });
-  });
-}
-
 // ——— BOOT ———
 document.addEventListener('DOMContentLoaded',()=>{
   runIntro();
@@ -150,6 +132,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   initCounters();
   initSkillBars();
   initMenu();
-  initCardFollow();
 });
 })();
