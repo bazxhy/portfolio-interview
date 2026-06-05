@@ -31,13 +31,15 @@
         </div>
         <div class="settings-divider"></div>
         <div class="settings-section">
-            <span class="settings-label" data-i18n="settings.theme">主题色 / Theme</span>
-            <div class="theme-dots">
-                <button class="theme-dot active" data-theme="blue"  style="--dot: #6c8cff" title="蓝紫"></button>
-                <button class="theme-dot" data-theme="green" style="--dot: #4ade80" title="翠绿"></button>
-                <button class="theme-dot" data-theme="amber" style="--dot: #f59e0b" title="琥珀"></button>
-                <button class="theme-dot" data-theme="pink"  style="--dot: #ec4899" title="粉红"></button>
-            </div>
+            <span class="settings-label" data-i18n="settings.theme">主题 / Theme</span>
+            <button class="theme-toggle-row" id="themeToggle">
+                <div class="theme-toggle-icon">
+                    <span class="theme-icon-dark">🌙</span>
+                    <span class="theme-icon-light">☀️</span>
+                </div>
+                <span class="theme-toggle-label" data-theme-label="dark" data-i18n="theme.dark">深色模式</span>
+                <span class="theme-toggle-label" data-theme-label="light" data-i18n="theme.light">浅色模式</span>
+            </button>
         </div>
     </div>
 

@@ -4,7 +4,9 @@
 const I18N = {
     zh: {
         'settings.lang': '语言 / Language',
-        'settings.theme': '主题色 / Theme',
+        'settings.theme': '主题 / Theme',
+        'theme.dark': '深色模式',
+        'theme.light': '浅色模式',
 
         'nav.about': '关于',
         'nav.skills': '技能',
@@ -87,7 +89,9 @@ const I18N = {
 
     en: {
         'settings.lang': '语言 / Language',
-        'settings.theme': '主题色 / Theme',
+        'settings.theme': '主题 / Theme',
+        'theme.dark': '深色模式',
+        'theme.light': '浅色模式',
 
         'nav.about': 'About',
         'nav.skills': 'Skills',

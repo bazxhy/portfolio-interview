@@ -1,7 +1,7 @@
 // ============================================================
 // 关福博 — Portfolio · Interaction Engine
 // Features: Particles, Navbar, Typing, Counters, Skill Bars,
-//           Scroll Animations, Settings Panel, Theme + Lang Switch
+//           Scroll Animations, Settings Panel, Dark/Light + Lang
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initSkillBars();
     initMobileMenu();
     initSettingsPanel();
-    initThemeSwitcher();
+    initThemeToggle();
     initLangSwitcher();
     refreshParticleColors();
 
     console.log('%c Portfolio Ready %c  关福博 · github.com/bazxhy',
-        `background:var(--accent, #6c8cff);color:#fff;padding:4px 8px;border-radius:4px;`,
-        'color:#9494b8;');
+        `background:var(--accent);color:#fff;padding:4px 8px;border-radius:4px;`,
+        'color:inherit;');
 });
 
 // ============================================================
@@ -41,35 +41,39 @@ function initSettingsPanel() {
         }
     });
 
-    // Close on Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') panel.classList.remove('open');
     });
 }
 
 // ============================================================
-// THEME SWITCHER
+// DARK / LIGHT THEME TOGGLE
 // ============================================================
-function initThemeSwitcher() {
-    const saved = localStorage.getItem('portfolio-theme') || 'blue';
+function initThemeToggle() {
+    const saved = localStorage.getItem('portfolio-theme') || 'dark';
     applyTheme(saved);
 
-    document.querySelectorAll('.theme-dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-            const theme = dot.dataset.theme;
-            applyTheme(theme);
-            localStorage.setItem('portfolio-theme', theme);
-            refreshParticleColors();
-        });
+    const toggleBtn = document.getElementById('themeToggle');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('portfolio-theme', next);
+        refreshParticleColors();
     });
 }
 
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    document.querySelectorAll('.theme-dot').forEach(d => {
-        d.classList.toggle('active', d.dataset.theme === theme);
+
+    // Show only the active label
+    document.querySelectorAll('.theme-toggle-label').forEach(label => {
+        const labelTheme = label.dataset.themeLabel;
+        label.style.display = (labelTheme === theme) ? 'inline' : 'none';
     });
-    // Update particle colors
+
     refreshParticleColors();
 }
 
@@ -89,10 +93,7 @@ function initLangSwitcher() {
         btn.addEventListener('click', () => {
             const lang = btn.dataset.lang;
             I18n.toggle(lang);
-            // Restart typing with new language
             restartTyping();
-            // Update counter labels
-            initCounters();
         });
     });
 }
@@ -155,8 +156,8 @@ function initNavbar() {
         navLinks.forEach(link => {
             const href = link.getAttribute('href')?.replace('#', '');
             if (href === current) {
-                link.style.color = '#fff';
-                link.style.background = 'color-mix(in srgb, var(--accent) 12%, transparent)';
+                link.style.color = 'var(--text-heading)';
+                link.style.background = 'color-mix(in srgb, var(--accent) 15%, transparent)';
             } else {
                 link.style.color = '';
                 link.style.background = '';
