@@ -595,6 +595,7 @@
         this.vx = clamp(this.vx, -0.1, 0.1);
         if (this.x < 20) this.vx = 0.06;
         if (this.x > W - 20) this.vx = -0.06;
+        this.y = groundY - 18 + Math.sin(this.x * 0.005) * 5;
       }
       this.x += this.vx;
     }
@@ -664,6 +665,7 @@
         this.vx = clamp(this.vx, -0.05, 0.05);
         if (this.x < 30) this.vx = 0.03;
         if (this.x > W - 30) this.vx = -0.03;
+        this.y = groundY - 15 + Math.sin(this.x * 0.003) * 3;
       }
       this.x += this.vx;
     }
@@ -728,6 +730,7 @@
       if (!active) { this.vx *= 0.95; }
       else {
         this.hopPhase += this.hopSpeed;
+        this.y = groundY - 20 + Math.sin(this.x * 0.002) * 10;
         if (Math.abs(this.hopPhase - Math.floor(this.hopPhase / Math.PI) * Math.PI) < 0.1) {
           this.vx += rand(-0.04, 0.04);
           this.vx = clamp(this.vx, -0.15, 0.15);
@@ -1016,6 +1019,7 @@
     }
     draw(ctx, alpha) {
       if (this.visProgress < 0.02) return;
+      const gY = groundY;
       ctx.save();
       ctx.globalAlpha = this.visProgress * alpha * 0.7;
       ctx.strokeStyle = 'rgba(80,70,60,0.8)';
@@ -1023,16 +1027,16 @@
       ctx.lineCap = 'round';
 
       const tipX = this.x + Math.sin(this.angle) * this.height;
-      const tipY = this.baseY - Math.cos(this.angle) * this.height;
+      const tipY = gY - Math.cos(this.angle) * this.height;
 
       ctx.beginPath();
-      ctx.moveTo(this.x, this.baseY);
+      ctx.moveTo(this.x, gY);
       ctx.lineTo(tipX, tipY);
       ctx.stroke();
 
       this.subAngles.forEach(sb => {
         const bx = this.x + (tipX - this.x) * sb.h;
-        const by = this.baseY + (tipY - this.baseY) * sb.h;
+        const by = gY + (tipY - gY) * sb.h;
         const brLen = this.height * sb.len;
         const brAngle = this.angle + sb.a;
         ctx.lineWidth = 1.5;
