@@ -1,26 +1,48 @@
 // ============================================================
-// 关福博 — Portfolio · Interaction Engine
-// Features: Particles, Navbar, Typing, Counters, Skill Bars,
-//           Scroll Animations, Settings Panel, Dark/Light + Lang
+// 关福博 — Portfolio · Full Interaction Engine
+// Intro overlay · Canvas fluid bg · Scroll reveal · i18n · Theme
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initParticles();
+    initIntro();
     initNavbar();
     initTyping();
-    initScrollAnimations();
+    initScrollReveal();
     initCounters();
     initSkillBars();
     initMobileMenu();
     initSettingsPanel();
     initThemeToggle();
     initLangSwitcher();
-    refreshParticleColors();
 
     console.log('%c Portfolio Ready %c  关福博 · github.com/bazxhy',
-        `background:var(--accent);color:#fff;padding:4px 8px;border-radius:4px;`,
+        'background:var(--accent, #6c8cff);color:#fff;padding:4px 8px;border-radius:4px;',
         'color:inherit;');
 });
+
+// ============================================================
+// INTRO ANIMATION — splash screen → fade to main content
+// ============================================================
+function initIntro() {
+    const overlay = document.getElementById('introOverlay');
+    const main = document.getElementById('mainContent');
+    if (!overlay || !main) return;
+
+    // Hide intro after animation plays (2.5s)
+    const duration = 2500;
+
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        main.classList.add('visible');
+        document.body.style.overflow = '';
+
+        // Start typing after intro
+        if (typeof restartTyping === 'function') restartTyping();
+    }, duration);
+
+    // Prevent scroll during intro
+    document.body.style.overflow = 'hidden';
+}
 
 // ============================================================
 // SETTINGS PANEL
@@ -61,28 +83,11 @@ function initThemeToggle() {
         const next = current === 'dark' ? 'light' : 'dark';
         applyTheme(next);
         localStorage.setItem('portfolio-theme', next);
-        refreshParticleColors();
     });
 }
 
 function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-
-    // Show only the active label
-    document.querySelectorAll('.theme-toggle-label').forEach(label => {
-        const labelTheme = label.dataset.themeLabel;
-        label.style.display = (labelTheme === theme) ? 'inline' : 'none';
-    });
-
-    refreshParticleColors();
-}
-
-function refreshParticleColors() {
-    const style = getComputedStyle(document.documentElement);
-    const accent = style.getPropertyValue('--accent').trim();
-    document.querySelectorAll('.particle').forEach(p => {
-        p.style.background = accent;
-    });
 }
 
 // ============================================================
@@ -99,40 +104,6 @@ function initLangSwitcher() {
 }
 
 // ============================================================
-// BACKGROUND PARTICLES
-// ============================================================
-function initParticles() {
-    const container = document.getElementById('particles');
-    if (!container) return;
-
-    const COUNT = 40;
-    const fragment = document.createDocumentFragment();
-
-    for (let i = 0; i < COUNT; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-
-        const size = Math.random() * 3 + 1;
-        const left = Math.random() * 100;
-        const delay = Math.random() * 12;
-        const duration = Math.random() * 8 + 10;
-
-        particle.style.cssText = `
-            width: ${size}px;
-            height: ${size}px;
-            left: ${left}%;
-            animation-delay: ${delay}s;
-            animation-duration: ${duration}s;
-            opacity: ${Math.random() * 0.4 + 0.1};
-        `;
-
-        fragment.appendChild(particle);
-    }
-
-    container.appendChild(fragment);
-}
-
-// ============================================================
 // NAVBAR SCROLL + ACTIVE LINK
 // ============================================================
 function initNavbar() {
@@ -142,15 +113,12 @@ function initNavbar() {
 
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
-
         navbar.classList.toggle('scrolled', currentScroll > 80);
 
         let current = '';
         sections.forEach(section => {
             const top = section.offsetTop - 140;
-            if (currentScroll >= top) {
-                current = section.getAttribute('id');
-            }
+            if (currentScroll >= top) current = section.getAttribute('id');
         });
 
         navLinks.forEach(link => {
@@ -167,13 +135,9 @@ function initNavbar() {
 }
 
 // ============================================================
-// TYPING EFFECT (i18n-aware)
+// TYPING EFFECT
 // ============================================================
 let typingTimeout = null;
-
-function initTyping() {
-    restartTyping();
-}
 
 function restartTyping() {
     if (typingTimeout) clearTimeout(typingTimeout);
@@ -195,7 +159,6 @@ function restartTyping() {
 
     function type() {
         const target = phrases[phraseIdx];
-
         if (isDeleting) {
             currentPhrase = target.substring(0, charIdx - 1);
             charIdx--;
@@ -203,35 +166,21 @@ function restartTyping() {
             currentPhrase = target.substring(0, charIdx + 1);
             charIdx++;
         }
-
         el.textContent = currentPhrase;
 
         let speed = isDeleting ? 40 : 80;
-
-        if (!isDeleting && charIdx === target.length) {
-            speed = 2000;
-            isDeleting = true;
-        } else if (isDeleting && charIdx === 0) {
-            isDeleting = false;
-            phraseIdx = (phraseIdx + 1) % phrases.length;
-            speed = 400;
-        }
+        if (!isDeleting && charIdx === target.length) { speed = 2000; isDeleting = true; }
+        else if (isDeleting && charIdx === 0) { isDeleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; speed = 400; }
 
         typingTimeout = setTimeout(type, speed);
     }
-
-    typingTimeout = setTimeout(type, 1200);
+    typingTimeout = setTimeout(type, 300);
 }
 
 // ============================================================
-// SCROLL ANIMATIONS
+// SCROLL REVEAL (IntersectionObserver)
 // ============================================================
-function initScrollAnimations() {
-    const observerOptions = {
-        threshold: 0.12,
-        rootMargin: '0px 0px -40px 0px',
-    };
-
+function initScrollReveal() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -239,13 +188,10 @@ function initScrollAnimations() {
                 observer.unobserve(entry.target);
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
 
-    document.querySelectorAll(
-        '.about-card, .contact-card, .skill-domain, .project-featured, ' +
-        '.section-title, .section-subtitle, .section-tag'
-    ).forEach(el => {
-        el.classList.add('animate-on-scroll');
+    document.querySelectorAll('.reveal-up, .about-card, .contact-card, .skill-domain, .project-featured').forEach(el => {
+        el.classList.add('reveal-up');
         observer.observe(el);
     });
 }
@@ -255,35 +201,31 @@ function initScrollAnimations() {
 // ============================================================
 function initCounters() {
     const counters = document.querySelectorAll('.counter');
-
-    const counterObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const el = entry.target;
                 const target = parseInt(el.dataset.target);
-                const duration = 1200;
-                const start = performance.now();
-
-                function update(now) {
-                    const elapsed = now - start;
-                    const progress = Math.min(elapsed / duration, 1);
-                    const eased = 1 - (1 - progress) * (1 - progress);
-                    const current = Math.floor(eased * target);
-                    el.textContent = current;
-                    if (progress < 1) {
-                        requestAnimationFrame(update);
-                    } else {
-                        el.textContent = target;
-                    }
-                }
-
-                requestAnimationFrame(update);
-                counterObserver.unobserve(el);
+                animateCounter(el, target);
+                observer.unobserve(el);
             }
         });
     }, { threshold: 0.5 });
+    counters.forEach(c => observer.observe(c));
+}
 
-    counters.forEach(c => counterObserver.observe(c));
+function animateCounter(el, target) {
+    const duration = 1200;
+    const start = performance.now();
+    function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - (1 - progress) * (1 - progress);
+        el.textContent = Math.floor(eased * target);
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target;
+    }
+    requestAnimationFrame(update);
 }
 
 // ============================================================
@@ -291,27 +233,17 @@ function initCounters() {
 // ============================================================
 function initSkillBars() {
     const bars = document.querySelectorAll('.skill-bar-fill');
-
-    const barObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const bar = entry.target;
-                const targetWidth = bar.style.width;
-                bar.style.width = '0';
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        bar.style.width = targetWidth;
-                    });
-                });
-                barObserver.unobserve(bar);
+                const targetWidth = bar.dataset.width + '%';
+                bar.style.width = targetWidth;
+                observer.unobserve(bar);
             }
         });
     }, { threshold: 0.3 });
-
-    bars.forEach(bar => {
-        bar.style.width = '0';
-        barObserver.observe(bar);
-    });
+    bars.forEach(bar => observer.observe(bar));
 }
 
 // ============================================================
@@ -320,22 +252,11 @@ function initSkillBars() {
 function initMobileMenu() {
     const toggle = document.getElementById('navToggle');
     const menu = document.querySelector('.nav-menu');
-
     if (!toggle || !menu) return;
 
-    toggle.addEventListener('click', () => {
-        menu.classList.toggle('open');
-    });
-
-    menu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            menu.classList.remove('open');
-        });
-    });
-
+    toggle.addEventListener('click', () => menu.classList.toggle('open'));
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.classList.remove('open')));
     document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && !toggle.contains(e.target)) {
-            menu.classList.remove('open');
-        }
+        if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
     });
 }
