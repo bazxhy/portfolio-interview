@@ -1,5 +1,7 @@
 // ============================================================
 // 关福博 — Portfolio · Interaction Engine
+// Features: Particles, Navbar, Typing, Counters, Skill Bars,
+//           Scroll Animations, Settings Panel, Theme + Lang Switch
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,10 +12,90 @@ document.addEventListener('DOMContentLoaded', () => {
     initCounters();
     initSkillBars();
     initMobileMenu();
+    initSettingsPanel();
+    initThemeSwitcher();
+    initLangSwitcher();
+    refreshParticleColors();
+
     console.log('%c Portfolio Ready %c  关福博 · github.com/bazxhy',
-        'background:#6c8cff;color:#fff;padding:4px 8px;border-radius:4px;',
+        `background:var(--accent, #6c8cff);color:#fff;padding:4px 8px;border-radius:4px;`,
         'color:#9494b8;');
 });
+
+// ============================================================
+// SETTINGS PANEL
+// ============================================================
+function initSettingsPanel() {
+    const trigger = document.getElementById('settingsTrigger');
+    const panel = document.getElementById('settingsPanel');
+    if (!trigger || !panel) return;
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && !trigger.contains(e.target)) {
+            panel.classList.remove('open');
+        }
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') panel.classList.remove('open');
+    });
+}
+
+// ============================================================
+// THEME SWITCHER
+// ============================================================
+function initThemeSwitcher() {
+    const saved = localStorage.getItem('portfolio-theme') || 'blue';
+    applyTheme(saved);
+
+    document.querySelectorAll('.theme-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            const theme = dot.dataset.theme;
+            applyTheme(theme);
+            localStorage.setItem('portfolio-theme', theme);
+            refreshParticleColors();
+        });
+    });
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-dot').forEach(d => {
+        d.classList.toggle('active', d.dataset.theme === theme);
+    });
+    // Update particle colors
+    refreshParticleColors();
+}
+
+function refreshParticleColors() {
+    const style = getComputedStyle(document.documentElement);
+    const accent = style.getPropertyValue('--accent').trim();
+    document.querySelectorAll('.particle').forEach(p => {
+        p.style.background = accent;
+    });
+}
+
+// ============================================================
+// LANGUAGE SWITCHER
+// ============================================================
+function initLangSwitcher() {
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            I18n.toggle(lang);
+            // Restart typing with new language
+            restartTyping();
+            // Update counter labels
+            initCounters();
+        });
+    });
+}
 
 // ============================================================
 // BACKGROUND PARTICLES
@@ -57,15 +139,11 @@ function initNavbar() {
     const navLinks = document.querySelectorAll('.nav-link');
     const sections = document.querySelectorAll('section[id]');
 
-    let lastScroll = 0;
-
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
 
-        // Scrolled state
         navbar.classList.toggle('scrolled', currentScroll > 80);
 
-        // Active nav link
         let current = '';
         sections.forEach(section => {
             const top = section.offsetTop - 140;
@@ -78,29 +156,35 @@ function initNavbar() {
             const href = link.getAttribute('href')?.replace('#', '');
             if (href === current) {
                 link.style.color = '#fff';
-                link.style.background = 'rgba(108, 140, 255, 0.12)';
+                link.style.background = 'color-mix(in srgb, var(--accent) 12%, transparent)';
             } else {
                 link.style.color = '';
                 link.style.background = '';
             }
         });
-
-        lastScroll = currentScroll;
     });
 }
 
 // ============================================================
-// TYPING EFFECT FOR HERO ROLE
+// TYPING EFFECT (i18n-aware)
 // ============================================================
+let typingTimeout = null;
+
 function initTyping() {
+    restartTyping();
+}
+
+function restartTyping() {
+    if (typingTimeout) clearTimeout(typingTimeout);
+
     const el = document.getElementById('typingText');
     if (!el) return;
 
     const phrases = [
-        'AI 应用开发探索者',
-        '用 AI 高效构建软件',
-        'Python 自动化开发者',
-        '从需求到部署全流程',
+        I18n.t('type.0'),
+        I18n.t('type.1'),
+        I18n.t('type.2'),
+        I18n.t('type.3'),
     ];
 
     let phraseIdx = 0;
@@ -124,7 +208,6 @@ function initTyping() {
         let speed = isDeleting ? 40 : 80;
 
         if (!isDeleting && charIdx === target.length) {
-            // Pause at the end before deleting
             speed = 2000;
             isDeleting = true;
         } else if (isDeleting && charIdx === 0) {
@@ -133,15 +216,14 @@ function initTyping() {
             speed = 400;
         }
 
-        setTimeout(type, speed);
+        typingTimeout = setTimeout(type, speed);
     }
 
-    // Start after a short delay
-    setTimeout(type, 1200);
+    typingTimeout = setTimeout(type, 1200);
 }
 
 // ============================================================
-// SCROLL ANIMATIONS (Intersection Observer)
+// SCROLL ANIMATIONS
 // ============================================================
 function initScrollAnimations() {
     const observerOptions = {
@@ -153,7 +235,7 @@ function initScrollAnimations() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                observer.unobserve(entry.target); // animate once
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
@@ -184,10 +266,8 @@ function initCounters() {
                 function update(now) {
                     const elapsed = now - start;
                     const progress = Math.min(elapsed / duration, 1);
-                    // Ease out quad
                     const eased = 1 - (1 - progress) * (1 - progress);
                     const current = Math.floor(eased * target);
-
                     el.textContent = current;
                     if (progress < 1) {
                         requestAnimationFrame(update);
@@ -217,7 +297,6 @@ function initSkillBars() {
                 const bar = entry.target;
                 const targetWidth = bar.style.width;
                 bar.style.width = '0';
-                // Trigger reflow then animate
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         bar.style.width = targetWidth;
@@ -228,9 +307,7 @@ function initSkillBars() {
         });
     }, { threshold: 0.3 });
 
-    // Store widths before observing
     bars.forEach(bar => {
-        bar.dataset.width = bar.style.width;
         bar.style.width = '0';
         barObserver.observe(bar);
     });
@@ -249,14 +326,12 @@ function initMobileMenu() {
         menu.classList.toggle('open');
     });
 
-    // Close menu on link click
     menu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             menu.classList.remove('open');
         });
     });
 
-    // Close menu on outside click
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target) && !toggle.contains(e.target)) {
             menu.classList.remove('open');
