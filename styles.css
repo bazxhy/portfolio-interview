@@ -119,6 +119,12 @@ a{color:inherit;text-decoration:none}ul{list-style:none}
 /* ============================================================
    SETTINGS
    ============================================================ */
+/* ---- Lang bar (top-right) ---- */
+.lang-bar{position:fixed;top:20px;right:92px;z-index:2001;display:flex;background:var(--bs);border:1px solid var(--bcc);border-radius:10px;padding:3px;gap:3px;box-shadow:0 2px 16px var(--sn)}
+.lang-bar .lang-btn{flex:1;padding:7px 14px;font-size:.82rem;font-weight:600;border:none;border-radius:7px;cursor:pointer;font-family:var(--fs);color:var(--ts);background:transparent;transition:var(--tf);white-space:nowrap}
+.lang-bar .lang-btn.on{color:#fff;background:var(--a)}
+.lang-bar .lang-btn:hover:not(.on){color:var(--tp)}
+/* ---- Settings trigger ---- */
 .stg-trigger{position:fixed;top:24px;right:32px;z-index:2000;width:48px;height:48px;border-radius:15px;background:var(--bs);border:1px solid var(--bcc);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ts);transition:var(--tf)}
 .stg-trigger:hover{border-color:var(--a);color:var(--a);box-shadow:0 4px 24px var(--aglow);transform:scale(1.06)}
 .stg-panel{position:fixed;top:80px;right:32px;z-index:2000;width:240px;background:var(--bs);border:1px solid var(--bcc);border-radius:var(--rl);padding:22px;box-shadow:0 24px 64px var(--sp);opacity:0;visibility:hidden;transform:translateY(-12px)scale(.95);transition:opacity .25s ease,transform .25s ease,visibility .25s}
