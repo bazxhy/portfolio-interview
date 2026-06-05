@@ -274,7 +274,7 @@ const I18n = {
 
     updateButtons() {
         document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.lang === this.current);
+            btn.classList.toggle('on', btn.dataset.lang === this.current);
         });
     },
 
