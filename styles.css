@@ -4,16 +4,11 @@
    Feature: Theme Switcher + i18n
    ============================================================ */
 
-/* ----- Base Variables ----- */
+/* ----- Shared Variables (all themes) ----- */
 :root {
-    --bg-deep: #050510;
-    --bg-primary: #0a0a1a;
-    --bg-secondary: #0e0e24;
-    --bg-card: rgba(18, 18, 40, 0.6);
-    --bg-card-hover: rgba(25, 25, 55, 0.8);
     --border-subtle: rgba(255, 255, 255, 0.05);
     --border-card: rgba(255, 255, 255, 0.08);
-    --border-hover: rgba(100, 130, 255, 0.3);
+    --accent-green: #4ade80;  /* always green — badge, indicators */
     --text-primary: #e8e8f4;
     --text-secondary: #9494b8;
     --text-muted: #606080;
@@ -29,9 +24,15 @@
 }
 
 /* ============================================================
-   THEME: Blue (default)
+   THEME: Blue (default) — 深海蓝背景
    ============================================================ */
 :root, [data-theme="blue"] {
+    --bg-deep: #050510;
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #0e0e24;
+    --bg-card: rgba(18, 18, 40, 0.6);
+    --bg-card-hover: rgba(25, 25, 55, 0.8);
+    --border-hover: rgba(108, 140, 255, 0.3);
     --accent: #6c8cff;
     --accent-glow: rgba(108, 140, 255, 0.25);
     --accent-strong: #4c6fff;
@@ -41,9 +42,15 @@
 }
 
 /* ============================================================
-   THEME: Green
+   THEME: Green — 森林绿背景
    ============================================================ */
 [data-theme="green"] {
+    --bg-deep: #040e08;
+    --bg-primary: #081a10;
+    --bg-secondary: #0b2416;
+    --bg-card: rgba(12, 36, 22, 0.6);
+    --bg-card-hover: rgba(18, 50, 32, 0.8);
+    --border-hover: rgba(74, 222, 128, 0.3);
     --accent: #4ade80;
     --accent-glow: rgba(74, 222, 128, 0.25);
     --accent-strong: #22c55e;
@@ -53,9 +60,15 @@
 }
 
 /* ============================================================
-   THEME: Amber
+   THEME: Amber — 暖棕暗金背景
    ============================================================ */
 [data-theme="amber"] {
+    --bg-deep: #100a02;
+    --bg-primary: #1a1205;
+    --bg-secondary: #241a08;
+    --bg-card: rgba(36, 28, 10, 0.6);
+    --bg-card-hover: rgba(50, 36, 14, 0.8);
+    --border-hover: rgba(245, 158, 11, 0.3);
     --accent: #f59e0b;
     --accent-glow: rgba(245, 158, 11, 0.25);
     --accent-strong: #d97706;
@@ -65,9 +78,15 @@
 }
 
 /* ============================================================
-   THEME: Pink
+   THEME: Pink — 暗紫玫红背景
    ============================================================ */
 [data-theme="pink"] {
+    --bg-deep: #100510;
+    --bg-primary: #1a0a18;
+    --bg-secondary: #240e20;
+    --bg-card: rgba(36, 16, 34, 0.6);
+    --bg-card-hover: rgba(50, 22, 46, 0.8);
+    --border-hover: rgba(236, 72, 153, 0.3);
     --accent: #ec4899;
     --accent-glow: rgba(236, 72, 153, 0.25);
     --accent-strong: #db2777;
@@ -780,7 +799,7 @@ img { max-width: 100%; display: block; }
     font-size: 0.85rem; color: var(--text-secondary); padding: 6px 0;
 }
 
-.feature-item svg { color: var(--accent-green, #4ade80); flex-shrink: 0; }
+.feature-item svg { color: var(--accent); flex-shrink: 0; }
 
 .project-tech { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 
