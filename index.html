@@ -1,313 +1,268 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关福博 — AI 驱动的新一代开发者</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关福博 — AI 驱动的新一代开发者</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- WebGL 流体背景 -->
-    <canvas id="fluidBg"></canvas>
-    <div class="bg-overlay"></div>
+<canvas id="fluidBg"></canvas>
+<div class="bg-noise"></div>
 
-    <!-- 入场动画层 -->
-    <div class="intro-overlay" id="introOverlay">
-        <div class="intro-content">
-            <div class="intro-glitch" data-text="HELLO">HELLO</div>
-            <div class="intro-name">关福博</div>
-            <div class="intro-line"></div>
-            <div class="intro-desc" data-i18n="intro.desc">AI 驱动开发 · 从想象到现实</div>
-            <div class="intro-loader">
-                <div class="loader-bar"></div>
-            </div>
+<!-- ====== INTRO ====== -->
+<div class="intro" id="intro">
+  <div class="intro-bg"></div>
+  <div class="intro-stage stage-1" id="stage1">
+    <div class="glitch-wrap">
+      <div class="glitch glitch-a">HELLO</div>
+      <div class="glitch glitch-b">HELLO</div>
+    </div>
+    <div class="intro-sub">WELCOME TO MY WORLD</div>
+  </div>
+  <div class="intro-stage stage-2" id="stage2">
+    <div class="intro-name-wrap">
+      <span class="intro-name-cn">关 福 博</span>
+    </div>
+    <div class="intro-divider"><span></span></div>
+    <div class="intro-tagline" data-i18n="intro.desc">AI 驱动开发 · 从想象到现实</div>
+  </div>
+  <div class="intro-bar-wrap"><div class="intro-bar"></div></div>
+</div>
+
+<!-- ====== SETTINGS ====== -->
+<div class="stg-trigger" id="stgTrigger" title="设置">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+</div>
+<div class="stg-panel" id="stgPanel">
+  <div class="stg-sec">
+    <span class="stg-label" data-i18n="settings.lang">语言 / Language</span>
+    <div class="lang-sw">
+      <button class="lang-btn on" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
+  <div class="stg-div"></div>
+  <div class="stg-sec">
+    <span class="stg-label" data-i18n="settings.theme">主题 / Theme</span>
+    <button class="th-btn" id="thToggle">
+      <div class="th-icon"><span class="ti-d">🌙</span><span class="ti-l">☀️</span></div>
+      <span class="th-txt td" data-i18n="theme.dark">深色模式</span>
+      <span class="th-txt tl" data-i18n="theme.light">浅色模式</span>
+    </button>
+  </div>
+</div>
+
+<!-- ====== NAV ====== -->
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a href="#home" class="nav-logo">{<span>GFB</span>}</a>
+    <ul class="nav-ls">
+      <li><a href="#about" class="nav-lk" data-i18n="nav.about">关于</a></li>
+      <li><a href="#skills" class="nav-lk" data-i18n="nav.skills">技能</a></li>
+      <li><a href="#projects" class="nav-lk" data-i18n="nav.projects">项目</a></li>
+      <li><a href="#contact" class="nav-lk" data-i18n="nav.contact">联系</a></li>
+    </ul>
+    <button class="nav-tg" id="navTg"><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ====== MAIN ====== -->
+<main class="main" id="main">
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div class="hero-in">
+    <div class="hero-badge"><span class="bdot"></span><span data-i18n="hero.badge">开放求职中</span></div>
+    <p class="hero-hi" data-i18n="hero.greeting">你好，我是</p>
+    <h1 class="hero-name">
+      <span class="hn hn1">关</span>
+      <span class="hn hn2">福</span>
+      <span class="hn hn3">博</span>
+    </h1>
+    <div class="hero-ro">
+      <span class="rp">&gt;</span><span class="rt" id="typing"></span><span class="rc">▊</span>
+    </div>
+    <p class="hero-bio" data-i18n="hero.bio">信息工程专业应届毕业生 · AI 应用开发探索者<br>擅长借助大语言模型高效构建软件，从需求到上线全流程独立交付。</p>
+    <div class="hero-nums">
+      <div class="num-it"><span class="num counter" data-target="2">0</span><span class="num-lb" data-i18n="hero.stat1">开源项目</span></div>
+      <div class="num-it"><span class="num counter" data-target="100">0</span><span class="num-lb" data-i18n="hero.stat2">% AI驱动</span></div>
+      <div class="num-it"><span class="num">2026</span><span class="num-lb" data-i18n="hero.stat3">应届毕业</span></div>
+    </div>
+    <div class="hero-btns">
+      <a href="#projects" class="btn-p" data-i18n="hero.btn1">查看项目</a>
+      <a href="#contact" class="btn-o" data-i18n="hero.btn2">联系我</a>
+    </div>
+  </div>
+  <div class="hero-sc">
+    <span data-i18n="hero.scroll">向下探索</span>
+    <div class="sc-mouse"><div class="sc-wh"></div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="sec sec-about">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-t" data-i18n="about.title">关于我</h2>
+      <p class="sec-st" data-i18n="about.sub">热爱编程，相信 AI 将重塑软件开发方式</p>
+    </div>
+    <div class="about-g">
+      <div class="card-a fade-el">
+        <div class="ca-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <h3 data-i18n="about.info.title">基本信息</h3>
+        <ul class="ca-ul">
+          <li><span class="il" data-i18n="about.info.name">姓名</span><span class="iv">关福博</span></li>
+          <li><span class="il" data-i18n="about.info.loc">所在地</span><span class="iv" data-i18n="about.info.locVal">中国 · 河南</span></li>
+          <li><span class="il" data-i18n="about.info.phone">手机</span><span class="iv">17638072602</span></li>
+          <li><span class="il" data-i18n="about.info.email">邮箱</span><span class="iv">770410209@qq.com</span></li>
+        </ul>
+      </div>
+      <div class="card-a fade-el">
+        <div class="ca-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <h3 data-i18n="about.edu.title">教育背景</h3>
+        <div class="edu">
+          <span class="edu-deg" data-i18n="about.edu.degree">本科</span>
+          <span class="edu-maj" data-i18n="about.edu.major">信息工程</span>
+          <span class="edu-sch" data-i18n="about.edu.school">新乡工程学院</span>
+          <span class="edu-yr">2022 - 2026</span>
         </div>
+      </div>
+      <div class="card-a ca-hl fade-el">
+        <div class="ca-icon ca-ia"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h3 data-i18n="about.dir.title">我的方向</h3>
+        <p data-i18n="about.dir.text">专注于 <strong>AI 辅助软件开发</strong>，熟练使用 Claude Code、Cursor 等 AI 编程工具高效构建应用。具备独立完成需求分析、架构设计、编码、部署的全流程能力。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="sec sec-skills">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-t" data-i18n="skills.title">技能栈</h2>
+      <p class="sec-st" data-i18n="skills.sub">以 AI 为核心的现代开发能力</p>
+    </div>
+    <div class="sk-g">
+      <div class="sk-b fade-el">
+        <div class="sk-head"><div class="sk-ic">🤖</div><div><h3 data-i18n="skills.ai.title">AI 开发工具</h3><p data-i18n="skills.ai.sub">驾驭 AI 进行高效软件工程</p></div></div>
+        <div class="bars">
+          <div class="bar"><div class="bar-i"><span>Claude Code</span><span data-i18n="skills.level.expert">精通</span></div><div class="bar-t"><div class="bar-f" data-w="95"></div></div></div>
+          <div class="bar"><div class="bar-i"><span>Cursor</span><span data-i18n="skills.level.pro">熟练</span></div><div class="bar-t"><div class="bar-f" data-w="85"></div></div></div>
+          <div class="bar"><div class="bar-i"><span>ChatGPT / DeepSeek</span><span data-i18n="skills.level.expert">精通</span></div><div class="bar-t"><div class="bar-f" data-w="90"></div></div></div>
+          <div class="bar"><div class="bar-i"><span>Prompt Engineering</span><span data-i18n="skills.level.pro">熟练</span></div><div class="bar-t"><div class="bar-f" data-w="88"></div></div></div>
+        </div>
+      </div>
+      <div class="sk-b fade-el">
+        <div class="sk-head"><div class="sk-ic">🐍</div><div><h3 data-i18n="skills.lang.title">编程语言</h3><p data-i18n="skills.lang.sub">核心开发语言与工具</p></div></div>
+        <div class="tags"><span class="tg">Python</span><span class="tg">HTML / CSS</span><span class="tg">JavaScript</span><span class="tg">SQL</span><span class="tg">Shell</span><span class="tg">C</span></div>
+      </div>
+      <div class="sk-b fade-el">
+        <div class="sk-head"><div class="sk-ic">⚙️</div><div><h3 data-i18n="skills.eng.title">工程能力</h3><p data-i18n="skills.eng.sub">从代码到部署的全流程</p></div></div>
+        <div class="tags"><span class="tg">Git / GitHub</span><span class="tg">REST API</span><span class="tg" data-i18n="skills.eng.tag.llm">LLM 应用开发</span><span class="tg" data-i18n="skills.eng.tag.auto">自动化脚本</span><span class="tg" data-i18n="skills.eng.tag.fe">前端开发</span><span class="tg" data-i18n="skills.eng.tag.deploy">部署运维</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="sec sec-proj">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-t" data-i18n="projects.title">项目作品</h2>
+      <p class="sec-st" data-i18n="projects.sub">全流程 AI 辅助开发的真实项目</p>
     </div>
 
-    <!-- 悬浮设置面板 -->
-    <div class="settings-trigger" id="settingsTrigger" title="设置 / Settings">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
+    <div class="proj fade-el">
+      <div class="proj-n">01</div>
+      <div class="proj-b card-b">
+        <div class="proj-top">
+          <div class="proj-emoji">🤖</div>
+          <div class="proj-meta">
+            <span class="pm-t" data-i18n="projects.p1.type">Python 自动化工具</span>
+            <span class="pm-s">⭐ <span data-i18n="projects.oss">开源项目</span></span>
+          </div>
+        </div>
+        <h3 class="proj-t" data-i18n="projects.p1.title">BOSS 直聘 AI 自动投递</h3>
+        <p class="proj-d" data-i18n="projects.p1.desc">基于 DeepSeek 大模型的全自动简历投递工具。AI 智能分析简历内容并推荐搜索关键词，实时联网评估公司工商信息和经营风险，多维打分匹配岗位适合度，支持学历经验过滤，每日自动计数防止超限投递。</p>
+        <div class="proj-feats">
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p1.f1">AI 简历分析 + 关键词推荐</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p1.f2">联网公司风险评估</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p1.f3">智能岗位匹配 + 五维打分</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p1.f4">CSV + JSON 防重复投递记录</span></div>
+        </div>
+        <div class="proj-tech"><span>Python</span><span>DeepSeek API</span><span>Selenium</span><span>PyYAML</span><span>Requests</span></div>
+        <a href="https://github.com/bazxhy/Automated-Resume-Submission" target="_blank" class="btn-pr"><span data-i18n="projects.viewSource">查看源码</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+      </div>
     </div>
 
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-section">
-            <span class="settings-label" data-i18n="settings.lang">语言 / Language</span>
-            <div class="lang-switch">
-                <button class="lang-btn active" data-lang="zh">中文</button>
-                <button class="lang-btn" data-lang="en">EN</button>
-            </div>
+    <div class="proj proj-r fade-el">
+      <div class="proj-n">02</div>
+      <div class="proj-b card-b">
+        <div class="proj-top">
+          <div class="proj-emoji">🎙️</div>
+          <div class="proj-meta">
+            <span class="pm-t" data-i18n="projects.p2.type">Python 桌面应用</span>
+            <span class="pm-s">⭐ <span data-i18n="projects.oss">开源项目</span></span>
+          </div>
         </div>
-        <div class="settings-divider"></div>
-        <div class="settings-section">
-            <span class="settings-label" data-i18n="settings.theme">主题 / Theme</span>
-            <button class="theme-toggle-row" id="themeToggle">
-                <div class="theme-toggle-icon">
-                    <span class="theme-icon-dark">🌙</span>
-                    <span class="theme-icon-light">☀️</span>
-                </div>
-                <span class="theme-toggle-label" data-theme-label="dark" data-i18n="theme.dark">深色模式</span>
-                <span class="theme-toggle-label" data-theme-label="light" data-i18n="theme.light">浅色模式</span>
-            </button>
+        <h3 class="proj-t" data-i18n="projects.p2.title">AI 面试助手</h3>
+        <p class="proj-d" data-i18n="projects.p2.desc">实时语音监听面试官提问，通过讯飞语音转文字 + DeepSeek 大模型结合简历上下文生成个性化回答建议。支持系统音频 Loopback 录制、流式逐字输出、自我介绍秒返、技术术语关键词自动纠错，可打包为独立 EXE 分发。</p>
+        <div class="proj-feats">
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p2.f1">WASAPI 系统音频实时监听</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p2.f2">讯飞语音识别 + 流式输出</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p2.f3">AI 结合简历生成回答建议</span></div>
+          <div class="feat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg><span data-i18n="projects.p2.f4">可打包 EXE 独立运行</span></div>
         </div>
+        <div class="proj-tech"><span>Python</span><span>DeepSeek API</span><span data-i18n="projects.p2.t2">讯飞 STT</span><span>PyAudio</span><span>PyInstaller</span></div>
+        <a href="https://github.com/bazxhy/ai-interview-assistant" target="_blank" class="btn-pr"><span data-i18n="projects.viewSource">查看源码</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- 导航栏 -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="nav-logo">
-                <span class="logo-bracket">{</span>GFB<span class="logo-bracket">}</span>
-            </a>
-            <ul class="nav-menu">
-                <li><a href="#about"    class="nav-link" data-i18n="nav.about">关于</a></li>
-                <li><a href="#skills"   class="nav-link" data-i18n="nav.skills">技能</a></li>
-                <li><a href="#projects" class="nav-link" data-i18n="nav.projects">项目</a></li>
-                <li><a href="#contact"  class="nav-link" data-i18n="nav.contact">联系</a></li>
-            </ul>
-            <button class="nav-toggle" id="navToggle" aria-label="菜单">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </nav>
+<!-- CONTACT -->
+<section id="contact" class="sec sec-contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2 class="sec-t" data-i18n="contact.title">联系我</h2>
+      <p class="sec-st" data-i18n="contact.sub">期待与你交流</p>
+    </div>
+    <div class="ct-g">
+      <a href="mailto:770410209@qq.com" class="ct-card card-b fade-el">
+        <div class="ct-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <h3 data-i18n="contact.email">邮箱</h3><p>770410209@qq.com</p><span class="ct-ar">→</span>
+      </a>
+      <a href="https://github.com/bazxhy" target="_blank" class="ct-card card-b fade-el">
+        <div class="ct-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
+        <h3>GitHub</h3><p>github.com/bazxhy</p><span class="ct-ar">→</span>
+      </a>
+      <div class="ct-card card-b fade-el">
+        <div class="ct-iw"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <h3 data-i18n="contact.phone">电话</h3><p>17638072602</p><span class="ct-ar">→</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- ============ 主内容区 ============ -->
-    <main class="main-content" id="mainContent">
+<footer class="ft">
+  <p>© 2026 关福博 · <span data-i18n="footer.tagline">用 AI 构建更好的软件</span></p>
+  <p class="ft-tag">Built with Claude Code · Deployed on GitHub Pages</p>
+</footer>
 
-        <!-- 首屏 -->
-        <section id="home" class="hero">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-dot"></span>
-                    <span data-i18n="hero.badge">开放求职中</span>
-                </div>
-                <p class="hero-greeting" data-i18n="hero.greeting">你好，我是</p>
-                <h1 class="hero-name reveal-chars">
-                    <span>关</span><span>福</span><span>博</span>
-                </h1>
-                <div class="hero-role">
-                    <span class="role-prefix">&gt;</span>
-                    <span class="role-text" id="typingText"></span>
-                    <span class="role-cursor">▊</span>
-                </div>
-                <p class="hero-bio" data-i18n="hero.bio">
-                    信息工程专业应届毕业生 · AI 应用开发探索者<br>
-                    擅长借助大语言模型高效构建软件，从需求到上线全流程独立交付。
-                </p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number counter" data-target="2">0</span>
-                        <span class="stat-label" data-i18n="hero.stat1">开源项目</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number counter" data-target="100">0</span>
-                        <span class="stat-label" data-i18n="hero.stat2">% AI驱动</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number">2026</span>
-                        <span class="stat-label" data-i18n="hero.stat3">应届毕业</span>
-                    </div>
-                </div>
-                <div class="hero-actions">
-                    <a href="#projects" class="btn btn-primary" data-i18n="hero.btn1">查看项目</a>
-                    <a href="#contact" class="btn btn-outline" data-i18n="hero.btn2">联系我</a>
-                </div>
-            </div>
-            <div class="hero-scroll">
-                <span data-i18n="hero.scroll">向下探索</span>
-                <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
-            </div>
-        </section>
+</main>
 
-        <!-- 关于 -->
-        <section id="about" class="about section">
-            <div class="container">
-                <div class="section-header reveal-up">
-                    <span class="section-tag">01</span>
-                    <h2 class="section-title" data-i18n="about.title">关于我</h2>
-                    <p class="section-subtitle" data-i18n="about.sub">热爱编程，相信 AI 将重塑软件开发方式</p>
-                </div>
-                <div class="about-main">
-                    <div class="about-card glass-card reveal-up">
-                        <div class="card-icon-wrapper">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </div>
-                        <h3 data-i18n="about.info.title">基本信息</h3>
-                        <ul>
-                            <li><span class="info-label" data-i18n="about.info.name">姓名</span><span class="info-value">关福博</span></li>
-                            <li><span class="info-label" data-i18n="about.info.loc">所在地</span><span class="info-value" data-i18n="about.info.locVal">中国 · 河南</span></li>
-                            <li><span class="info-label" data-i18n="about.info.phone">手机</span><span class="info-value">17638072602</span></li>
-                            <li><span class="info-label" data-i18n="about.info.email">邮箱</span><span class="info-value">770410209@qq.com</span></li>
-                        </ul>
-                    </div>
-                    <div class="about-card glass-card reveal-up">
-                        <div class="card-icon-wrapper">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                        </div>
-                        <h3 data-i18n="about.edu.title">教育背景</h3>
-                        <div class="edu-info">
-                            <span class="edu-degree" data-i18n="about.edu.degree">本科</span>
-                            <span class="edu-major" data-i18n="about.edu.major">信息工程</span>
-                            <span class="edu-school" data-i18n="about.edu.school">新乡工程学院</span>
-                            <span class="edu-year">2022 - 2026</span>
-                        </div>
-                    </div>
-                    <div class="about-card glass-card highlight-card reveal-up">
-                        <div class="card-icon-wrapper accent">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.707.707A5 5 0 0 1 12 15a5 5 0 0 1-2.829-.757l-.707-.707z"/></svg>
-                        </div>
-                        <h3 data-i18n="about.dir.title">我的方向</h3>
-                        <p data-i18n="about.dir.text">专注于 <strong>AI 辅助软件开发</strong>，熟练使用 Claude Code、Cursor 等 AI 编程工具高效构建应用。具备独立完成需求分析、架构设计、编码、部署的全流程能力。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 技能 -->
-        <section id="skills" class="skills section">
-            <div class="container">
-                <div class="section-header reveal-up">
-                    <span class="section-tag">02</span>
-                    <h2 class="section-title" data-i18n="skills.title">技能栈</h2>
-                    <p class="section-subtitle" data-i18n="skills.sub">以 AI 为核心的现代开发能力</p>
-                </div>
-                <div class="skills-layout">
-                    <div class="skill-domain reveal-up">
-                        <div class="domain-header">
-                            <div class="domain-icon">🤖</div>
-                            <div><h3 data-i18n="skills.ai.title">AI 开发工具</h3><p data-i18n="skills.ai.sub">驾驭 AI 进行高效软件工程</p></div>
-                        </div>
-                        <div class="skill-bars">
-                            <div class="skill-bar-item"><div class="skill-bar-info"><span>Claude Code</span><span data-i18n="skills.level.expert">精通</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="95"></div></div></div>
-                            <div class="skill-bar-item"><div class="skill-bar-info"><span>Cursor</span><span data-i18n="skills.level.pro">熟练</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="85"></div></div></div>
-                            <div class="skill-bar-item"><div class="skill-bar-info"><span>ChatGPT / DeepSeek</span><span data-i18n="skills.level.expert">精通</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="90"></div></div></div>
-                            <div class="skill-bar-item"><div class="skill-bar-info"><span>Prompt Engineering</span><span data-i18n="skills.level.pro">熟练</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="88"></div></div></div>
-                        </div>
-                    </div>
-                    <div class="skill-domain reveal-up">
-                        <div class="domain-header">
-                            <div class="domain-icon">🐍</div>
-                            <div><h3 data-i18n="skills.lang.title">编程语言</h3><p data-i18n="skills.lang.sub">核心开发语言与工具</p></div>
-                        </div>
-                        <div class="skill-tags">
-                            <span class="skill-tag">Python</span><span class="skill-tag">HTML / CSS</span>
-                            <span class="skill-tag">JavaScript</span><span class="skill-tag">SQL</span>
-                            <span class="skill-tag">Shell</span><span class="skill-tag">C</span>
-                        </div>
-                    </div>
-                    <div class="skill-domain reveal-up">
-                        <div class="domain-header">
-                            <div class="domain-icon">⚙️</div>
-                            <div><h3 data-i18n="skills.eng.title">工程能力</h3><p data-i18n="skills.eng.sub">从代码到部署的全流程</p></div>
-                        </div>
-                        <div class="skill-tags">
-                            <span class="skill-tag">Git / GitHub</span><span class="skill-tag">REST API</span>
-                            <span class="skill-tag" data-i18n="skills.eng.tag.llm">LLM 应用开发</span>
-                            <span class="skill-tag" data-i18n="skills.eng.tag.auto">自动化脚本</span>
-                            <span class="skill-tag" data-i18n="skills.eng.tag.fe">前端开发</span>
-                            <span class="skill-tag" data-i18n="skills.eng.tag.deploy">部署运维</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 项目 -->
-        <section id="projects" class="projects section">
-            <div class="container">
-                <div class="section-header reveal-up">
-                    <span class="section-tag">03</span>
-                    <h2 class="section-title" data-i18n="projects.title">项目作品</h2>
-                    <p class="section-subtitle" data-i18n="projects.sub">全流程 AI 辅助开发的真实项目</p>
-                </div>
-                <div class="project-featured reveal-up">
-                    <div class="project-number">01</div>
-                    <div class="project-body glass-card">
-                        <div class="project-header-area">
-                            <div class="project-emoji">🤖</div>
-                            <div class="project-meta">
-                                <span class="project-type" data-i18n="projects.p1.type">Python 自动化工具</span>
-                                <span class="project-stars">⭐ <span data-i18n="projects.oss">开源项目</span></span>
-                            </div>
-                        </div>
-                        <h3 class="project-title" data-i18n="projects.p1.title">BOSS 直聘 AI 自动投递</h3>
-                        <p class="project-desc" data-i18n="projects.p1.desc">基于 DeepSeek 大模型的全自动简历投递工具。AI 智能分析简历内容并推荐搜索关键词，实时联网评估公司工商信息和经营风险，多维打分匹配岗位适合度，支持学历经验过滤，每日自动计数防止超限投递。</p>
-                        <div class="project-features">
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p1.f1">AI 简历分析 + 关键词推荐</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p1.f2">联网公司风险评估</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p1.f3">智能岗位匹配 + 五维打分</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p1.f4">CSV + JSON 防重复投递记录</span></div>
-                        </div>
-                        <div class="project-tech"><span>Python</span><span>DeepSeek API</span><span>Selenium</span><span>PyYAML</span><span>Requests</span></div>
-                        <a href="https://github.com/bazxhy/Automated-Resume-Submission" target="_blank" class="btn btn-project"><span data-i18n="projects.viewSource">查看源码</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
-                    </div>
-                </div>
-                <div class="project-featured reverse reveal-up">
-                    <div class="project-number">02</div>
-                    <div class="project-body glass-card">
-                        <div class="project-header-area">
-                            <div class="project-emoji">🎙️</div>
-                            <div class="project-meta">
-                                <span class="project-type" data-i18n="projects.p2.type">Python 桌面应用</span>
-                                <span class="project-stars">⭐ <span data-i18n="projects.oss">开源项目</span></span>
-                            </div>
-                        </div>
-                        <h3 class="project-title" data-i18n="projects.p2.title">AI 面试助手</h3>
-                        <p class="project-desc" data-i18n="projects.p2.desc">实时语音监听面试官提问，通过讯飞语音转文字 + DeepSeek 大模型结合简历上下文生成个性化回答建议。支持系统音频 Loopback 录制、流式逐字输出、自我介绍秒返、技术术语关键词自动纠错，可打包为独立 EXE 分发。</p>
-                        <div class="project-features">
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p2.f1">WASAPI 系统音频实时监听</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p2.f2">讯飞语音识别 + 流式输出</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p2.f3">AI 结合简历生成回答建议</span></div>
-                            <div class="feature-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> <span data-i18n="projects.p2.f4">可打包 EXE 独立运行</span></div>
-                        </div>
-                        <div class="project-tech"><span>Python</span><span>DeepSeek API</span><span data-i18n="projects.p2.t2">讯飞 STT</span><span>PyAudio</span><span>PyInstaller</span></div>
-                        <a href="https://github.com/bazxhy/ai-interview-assistant" target="_blank" class="btn btn-project"><span data-i18n="projects.viewSource">查看源码</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 联系 -->
-        <section id="contact" class="contact section">
-            <div class="container">
-                <div class="section-header reveal-up">
-                    <span class="section-tag">04</span>
-                    <h2 class="section-title" data-i18n="contact.title">联系我</h2>
-                    <p class="section-subtitle" data-i18n="contact.sub">期待与你交流</p>
-                </div>
-                <div class="contact-grid">
-                    <a href="mailto:770410209@qq.com" class="contact-card glass-card reveal-up">
-                        <div class="contact-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-                        <h3 data-i18n="contact.email">邮箱</h3><p>770410209@qq.com</p><span class="contact-arrow">→</span>
-                    </a>
-                    <a href="https://github.com/bazxhy" target="_blank" class="contact-card glass-card reveal-up">
-                        <div class="contact-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></div>
-                        <h3>GitHub</h3><p>github.com/bazxhy</p><span class="contact-arrow">→</span>
-                    </a>
-                    <div class="contact-card glass-card reveal-up">
-                        <div class="contact-icon-wrap"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-                        <h3 data-i18n="contact.phone">电话</h3><p>17638072602</p><span class="contact-arrow">→</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 页脚 -->
-        <footer class="footer">
-            <div class="footer-inner">
-                <p>© 2026 关福博 · <span data-i18n="footer.tagline">用 AI 构建更好的软件</span></p>
-                <p class="footer-tagline">Built with Claude Code · Deployed on GitHub Pages</p>
-            </div>
-        </footer>
-
-    </main>
-
-    <script src="i18n.js"></script>
-    <script src="fluid-bg.js"></script>
-    <script src="script.js"></script>
+<script src="i18n.js"></script>
+<script src="fluid-bg.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

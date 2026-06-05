@@ -1,262 +1,155 @@
 // ============================================================
-// 关福博 — Portfolio · Full Interaction Engine
-// Intro overlay · Canvas fluid bg · Scroll reveal · i18n · Theme
+// 关福博 — Portfolio · Full Engine
+// Cinematic intro · Fluid canvas · Scroll reveal · i18n · Theme
 // ============================================================
 
-document.addEventListener('DOMContentLoaded', () => {
-    initIntro();
-    initNavbar();
-    initTyping();
-    initScrollReveal();
-    initCounters();
-    initSkillBars();
-    initMobileMenu();
-    initSettingsPanel();
-    initThemeToggle();
-    initLangSwitcher();
+(function(){
+'use strict';
 
-    console.log('%c Portfolio Ready %c  关福博 · github.com/bazxhy',
-        'background:var(--accent, #6c8cff);color:#fff;padding:4px 8px;border-radius:4px;',
-        'color:inherit;');
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+
+// ——— INTRO SEQUENCE ———
+function runIntro(){
+  const intro=$('#intro'),main=$('#main'),
+        s1=$('#stage1'),s2=$('#stage2');
+  if(!intro||!main)return;
+
+  document.body.style.overflow='hidden';
+
+  // Phase 1: glitch HELLO (0–1.2s)
+  // Phase 2: swap to name stage (1.2s)
+  setTimeout(()=>{
+    s1.style.opacity='0';s1.style.transform='translateY(-30px)';
+    s2.style.opacity='1';s2.style.transform='translateY(0)';
+  },1050);
+
+  // Phase 3: hide intro, show main (2.2s)
+  setTimeout(()=>{
+    intro.classList.add('hide');
+    main.classList.add('on');
+    document.body.style.overflow='';
+    restartTyping();
+    // Trigger counter + skill bar via scroll check
+    window.dispatchEvent(new Event('scroll'));
+  },2200);
+}
+
+// ——— SETTINGS PANEL ———
+function initSettings(){
+  const trig=$('#stgTrigger'),panel=$('#stgPanel');
+  if(!trig||!panel)return;
+  trig.addEventListener('click',e=>{e.stopPropagation();panel.classList.toggle('on')});
+  document.addEventListener('click',e=>{if(!panel.contains(e.target)&&!trig.contains(e.target))panel.classList.remove('on')});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')panel.classList.remove('on')});
+}
+
+// ——— THEME ———
+function initTheme(){
+  const saved=localStorage.getItem('pf-theme')||'dark';
+  applyTheme(saved);
+  const btn=$('#thToggle');
+  if(btn)btn.addEventListener('click',()=>{
+    const cur=document.documentElement.getAttribute('data-theme')||'dark';
+    const nxt=cur==='dark'?'light':'dark';
+    applyTheme(nxt);localStorage.setItem('pf-theme',nxt);
+  });
+}
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t)}
+
+// ——— LANGUAGE ———
+function initLang(){
+  $$('.lang-btn').forEach(b=>b.addEventListener('click',()=>{
+    const l=b.dataset.lang;
+    if(typeof I18n!=='undefined'){I18n.toggle(l);restartTyping()}
+    $$('.lang-btn').forEach(x=>x.classList.toggle('on',x.dataset.lang===l));
+  }));
+}
+
+// ——— NAVBAR ———
+function initNav(){
+  const nav=$('#nav'),lks=$$('.nav-lk'),secs=$$('section[id]');
+  window.addEventListener('scroll',()=>{
+    const y=pageYOffset;
+    nav.classList.toggle('on',y>80);
+    let cur='';
+    secs.forEach(s=>{if(y>=s.offsetTop-140)cur=s.getAttribute('id')});
+    lks.forEach(l=>{
+      if(l.getAttribute('href')==='#'+cur){l.style.color='var(--th)';l.style.background='color-mix(in srgb,var(--a)15%,transparent)'}
+      else{l.style.color='';l.style.background=''}
+    });
+  });
+}
+
+// ——— TYPING ———
+let tt=null;
+function restartTyping(){
+  if(tt)clearTimeout(tt);
+  const el=$('#typing');if(!el)return;
+  const p=[];for(let i=0;i<4;i++)p.push(typeof I18n!=='undefined'?I18n.t('type.'+i):['AI 应用开发探索者','用 AI 高效构建软件','Python 自动化开发者','从需求到部署全流程'][i]);
+  let pi=0,ci=0,del=false,cur='';
+  function type(){
+    const t=p[pi];
+    if(del){cur=t.substring(0,ci-1);ci--}else{cur=t.substring(0,ci+1);ci++}
+    el.textContent=cur;
+    let sp=del?35:70;
+    if(!del&&ci===t.length){sp=2000;del=true}
+    else if(del&&ci===0){del=false;pi=(pi+1)%p.length;sp=350}
+    tt=setTimeout(type,sp);
+  }
+  tt=setTimeout(type,300);
+}
+
+// ——— SCROLL REVEAL ———
+function initReveal(){
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+  $$('.fade-el').forEach(el=>obs.observe(el));
+}
+
+// ——— COUNTERS ———
+function initCounters(){
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const el=e.target,t=parseInt(el.dataset.target),d=1200,s=performance.now();function u(n){const p=Math.min((n-s)/d,1),v=Math.floor((1-(1-p)*(1-p))*t);el.textContent=v;if(p<1)requestAnimationFrame(u);else el.textContent=t}requestAnimationFrame(u);obs.unobserve(el)}})},{threshold:.5});
+  $$('.counter').forEach(c=>obs.observe(c));
+}
+
+// ——— SKILL BARS ———
+function initSkillBars(){
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const b=e.target;b.style.width=b.dataset.w+'%';obs.unobserve(b)}})},{threshold:.3});
+  $$('.bar-f').forEach(b=>obs.observe(b));
+}
+
+// ——— MOBILE MENU ———
+function initMenu(){
+  const tg=$('#navTg'),menu=$('.nav-ls');
+  if(!tg||!menu)return;
+  tg.addEventListener('click',()=>menu.classList.toggle('open'));
+  menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>menu.classList.remove('open')));
+  document.addEventListener('click',e=>{if(!menu.contains(e.target)&&!tg.contains(e.target))menu.classList.remove('open')});
+}
+
+// ——— CARD FOLLOW SPOTLIGHT ———
+function initCardFollow(){
+  document.addEventListener('mousemove',e=>{
+    $$('.card-b').forEach(card=>{
+      const r=card.getBoundingClientRect();
+      const x=e.clientX-r.left,y=e.clientY-r.top;
+      card.style.setProperty('--mx',x+'px');
+      card.style.setProperty('--my',y+'px');
+    });
+  });
+}
+
+// ——— BOOT ———
+document.addEventListener('DOMContentLoaded',()=>{
+  runIntro();
+  initSettings();
+  initTheme();
+  initLang();
+  initNav();
+  initReveal();
+  initCounters();
+  initSkillBars();
+  initMenu();
+  initCardFollow();
 });
-
-// ============================================================
-// INTRO ANIMATION — splash screen → fade to main content
-// ============================================================
-function initIntro() {
-    const overlay = document.getElementById('introOverlay');
-    const main = document.getElementById('mainContent');
-    if (!overlay || !main) return;
-
-    // Hide intro after animation plays (2.5s)
-    const duration = 2500;
-
-    setTimeout(() => {
-        overlay.classList.add('hidden');
-        main.classList.add('visible');
-        document.body.style.overflow = '';
-
-        // Start typing after intro
-        if (typeof restartTyping === 'function') restartTyping();
-    }, duration);
-
-    // Prevent scroll during intro
-    document.body.style.overflow = 'hidden';
-}
-
-// ============================================================
-// SETTINGS PANEL
-// ============================================================
-function initSettingsPanel() {
-    const trigger = document.getElementById('settingsTrigger');
-    const panel = document.getElementById('settingsPanel');
-    if (!trigger || !panel) return;
-
-    trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        panel.classList.toggle('open');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!panel.contains(e.target) && !trigger.contains(e.target)) {
-            panel.classList.remove('open');
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') panel.classList.remove('open');
-    });
-}
-
-// ============================================================
-// DARK / LIGHT THEME TOGGLE
-// ============================================================
-function initThemeToggle() {
-    const saved = localStorage.getItem('portfolio-theme') || 'dark';
-    applyTheme(saved);
-
-    const toggleBtn = document.getElementById('themeToggle');
-    if (!toggleBtn) return;
-
-    toggleBtn.addEventListener('click', () => {
-        const current = document.documentElement.getAttribute('data-theme') || 'dark';
-        const next = current === 'dark' ? 'light' : 'dark';
-        applyTheme(next);
-        localStorage.setItem('portfolio-theme', next);
-    });
-}
-
-function applyTheme(theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-}
-
-// ============================================================
-// LANGUAGE SWITCHER
-// ============================================================
-function initLangSwitcher() {
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const lang = btn.dataset.lang;
-            I18n.toggle(lang);
-            restartTyping();
-        });
-    });
-}
-
-// ============================================================
-// NAVBAR SCROLL + ACTIVE LINK
-// ============================================================
-function initNavbar() {
-    const navbar = document.getElementById('navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('section[id]');
-
-    window.addEventListener('scroll', () => {
-        const currentScroll = window.pageYOffset;
-        navbar.classList.toggle('scrolled', currentScroll > 80);
-
-        let current = '';
-        sections.forEach(section => {
-            const top = section.offsetTop - 140;
-            if (currentScroll >= top) current = section.getAttribute('id');
-        });
-
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href')?.replace('#', '');
-            if (href === current) {
-                link.style.color = 'var(--text-heading)';
-                link.style.background = 'color-mix(in srgb, var(--accent) 15%, transparent)';
-            } else {
-                link.style.color = '';
-                link.style.background = '';
-            }
-        });
-    });
-}
-
-// ============================================================
-// TYPING EFFECT
-// ============================================================
-let typingTimeout = null;
-
-function restartTyping() {
-    if (typingTimeout) clearTimeout(typingTimeout);
-
-    const el = document.getElementById('typingText');
-    if (!el) return;
-
-    const phrases = [
-        I18n.t('type.0'),
-        I18n.t('type.1'),
-        I18n.t('type.2'),
-        I18n.t('type.3'),
-    ];
-
-    let phraseIdx = 0;
-    let charIdx = 0;
-    let isDeleting = false;
-    let currentPhrase = '';
-
-    function type() {
-        const target = phrases[phraseIdx];
-        if (isDeleting) {
-            currentPhrase = target.substring(0, charIdx - 1);
-            charIdx--;
-        } else {
-            currentPhrase = target.substring(0, charIdx + 1);
-            charIdx++;
-        }
-        el.textContent = currentPhrase;
-
-        let speed = isDeleting ? 40 : 80;
-        if (!isDeleting && charIdx === target.length) { speed = 2000; isDeleting = true; }
-        else if (isDeleting && charIdx === 0) { isDeleting = false; phraseIdx = (phraseIdx + 1) % phrases.length; speed = 400; }
-
-        typingTimeout = setTimeout(type, speed);
-    }
-    typingTimeout = setTimeout(type, 300);
-}
-
-// ============================================================
-// SCROLL REVEAL (IntersectionObserver)
-// ============================================================
-function initScrollReveal() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
-
-    document.querySelectorAll('.reveal-up, .about-card, .contact-card, .skill-domain, .project-featured').forEach(el => {
-        el.classList.add('reveal-up');
-        observer.observe(el);
-    });
-}
-
-// ============================================================
-// COUNTER ANIMATION
-// ============================================================
-function initCounters() {
-    const counters = document.querySelectorAll('.counter');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const el = entry.target;
-                const target = parseInt(el.dataset.target);
-                animateCounter(el, target);
-                observer.unobserve(el);
-            }
-        });
-    }, { threshold: 0.5 });
-    counters.forEach(c => observer.observe(c));
-}
-
-function animateCounter(el, target) {
-    const duration = 1200;
-    const start = performance.now();
-    function update(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - (1 - progress) * (1 - progress);
-        el.textContent = Math.floor(eased * target);
-        if (progress < 1) requestAnimationFrame(update);
-        else el.textContent = target;
-    }
-    requestAnimationFrame(update);
-}
-
-// ============================================================
-// SKILL BAR ANIMATION
-// ============================================================
-function initSkillBars() {
-    const bars = document.querySelectorAll('.skill-bar-fill');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const bar = entry.target;
-                const targetWidth = bar.dataset.width + '%';
-                bar.style.width = targetWidth;
-                observer.unobserve(bar);
-            }
-        });
-    }, { threshold: 0.3 });
-    bars.forEach(bar => observer.observe(bar));
-}
-
-// ============================================================
-// MOBILE MENU
-// ============================================================
-function initMobileMenu() {
-    const toggle = document.getElementById('navToggle');
-    const menu = document.querySelector('.nav-menu');
-    if (!toggle || !menu) return;
-
-    toggle.addEventListener('click', () => menu.classList.toggle('open'));
-    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => menu.classList.remove('open')));
-    document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && !toggle.contains(e.target)) menu.classList.remove('open');
-    });
-}
+})();

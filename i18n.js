@@ -7,6 +7,7 @@ const I18N = {
         'settings.theme': '主题 / Theme',
         'theme.dark': '深色模式',
         'theme.light': '浅色模式',
+        'intro.desc': 'AI 驱动开发 · 从想象到现实',
 
         'nav.about': '关于',
         'nav.skills': '技能',
@@ -92,6 +93,7 @@ const I18N = {
         'settings.theme': '主题 / Theme',
         'theme.dark': '深色模式',
         'theme.light': '浅色模式',
+        'intro.desc': 'AI 驱动开发 · 从想象到现实',
 
         'nav.about': 'About',
         'nav.skills': 'Skills',
